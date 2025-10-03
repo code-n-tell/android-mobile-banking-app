@@ -1,0 +1,136 @@
+@startuml LiveChatProcess
+!theme plain
+
+'External Actor
+
+box "User" #FFF2CC
+  actor User
+end box
+
+box "Client App" #f8e6ccff
+  participant MobileApp
+  participant LiveChatScreen.jsx
+end box
+
+User -> MobileApp : (Start) User clicks chat icon
+activate MobileApp
+
+MobileApp -> LiveChatScreen.jsx : User starts live chat
+activate LiveChatScreen.jsx
+
+LiveChatScreen.jsx -> LiveChatScreen.jsx : connect()
+activate LiveChatScreen.jsx
+
+
+box "react-native" #D5E8D4
+  participant WebSocket.js
+  participant WebSocketModule.kt
+end box
+
+
+LiveChatScreen.jsx -> WebSocket.js : Initialises WebSocket object with URL
+activate WebSocket.js
+
+WebSocket.js -> WebSocketModule.kt : connect()
+activate WebSocketModule.kt
+
+
+WebSocketModule.kt -> WebSocketModule.kt : .newWebSocket(), uses OkHttpClient
+activate WebSocketModule.kt
+
+box "asyncio" #F8CECC
+  participant events.py
+end box
+
+box "uvicorn" #E1D5E7
+  participant server.py
+  participant config.py
+  participant h11_impl.py
+  participant wsproto_impl.py
+end box
+
+box "FastAPI" #DAE8FC
+  participant main.py
+end box
+
+box "starlette" #F5F5F5
+  participant websockets.py
+end box
+
+== Assumed Server already running in the background ==
+
+activate events.py
+activate server.py
+WebSocketModule.kt -> events.py :  await loop.create_server(...), server listener
+
+events.py -> server.py : create_protocol()
+activate server.py
+
+server.py -> config.py : .http_protocol_class(), specifies the AutoHTTPProtocol which defaults to H11Protocol
+activate config.py
+
+return
+
+== Protocol which inherits from asyncio.Protocol, this calls data_received automatically when TCP bytes are received ==
+
+server.py -> h11_impl.py : data_received(), called automatically when TCP bytes are received
+activate h11_impl.py
+
+
+h11_impl.py -> h11_impl.py : handle_events()
+activate h11_impl.py
+
+h11_impl.py -> h11_impl.py : _should_upgrade()
+activate h11_impl.py
+
+h11_impl.py -> h11_impl.py : _get_upgrade()
+activate h11_impl.py
+
+return
+return
+
+h11_impl.py -> h11_impl.py : handle_websocket_upgrade()
+activate h11_impl.py
+
+h11_impl.py -> config.py : self.ws_protocol_class
+activate config.py
+
+config.py -> wsproto_impl.py : WebSocketProtocol.__init__()
+activate wsproto_impl.py
+
+' afterwards transport is set to the WebSocketProtocol instance
+
+== WebSocketProtocol which inherits from asyncio.Protocol, this calls data_received automatically when TCP bytes are received ==
+
+wsproto_impl.py -> wsproto_impl.py : data_received()
+activate wsproto_impl.py
+
+wsproto_impl.py -> wsproto_impl.py : handle_events()
+activate wsproto_impl.py
+
+wsproto_impl.py -> wsproto_impl.py : handle_connect()
+activate wsproto_impl.py
+
+wsproto_impl.py -> wsproto_impl.py : run_asgi(), awaiting the ASGI application
+activate wsproto_impl.py
+
+wsproto_impl.py -> wsproto_impl.py : self.app(self.scope)
+activate wsproto_impl.py
+
+== Routes request to FastAPI app ==
+
+wsproto_impl.py -> main.py : await websocket.accept()
+activate main.py
+
+main.py -> websockets.py : accept() (starlette package)
+activate websockets.py
+
+websockets.py -> websockets.py : self.send()
+activate websockets.py
+
+websockets.py -> wsproto_impl.py : asgi_send(), accept handshake
+activate wsproto_impl.py
+
+
+
+@enduml
