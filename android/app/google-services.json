@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "520383732856",
-    "project_id": "android-mobile-banking-app",
-    "storage_bucket": "android-mobile-banking-app.firebasestorage.app"
+    "project_number": "963141998839",
+    "project_id": "zentra-e1c3d",
+    "storage_bucket": "zentra-e1c3d.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:520383732856:android:1efd8ad91af9f64699218d",
+        "mobilesdk_app_id": "1:963141998839:android:7b45f4c37f0ec4b8949bf2",
         "android_client_info": {
-          "package_name": "com.ahmadsyuaib.androidmobilebankingapp"
+          "package_name": "com.csec.zentra"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDyXWISbyEWyKt9jHmk0vk_Wde2uIbg4i0"
+          "current_key": "AIzaSyD_CoWXWkl7Phnpam3yUQJ8iv_WA6qp90s"
         }
       ],
       "services": {

@@ -88,7 +88,7 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.ahmadsyuaib.androidmobilebankingapp'
+    namespace 'com.csec.zentra'
     defaultConfig {
         externalNativeBuild {
             cmake {
@@ -99,7 +99,7 @@ android {
                 cppFlags "-DUNICODE -D_UNICODE -DWIN32 -D_WINDOWS -D_LARGEFILE_SOURCE"
             }
         }
-        applicationId 'com.ahmadsyuaib.androidmobilebankingapp'
+        applicationId 'com.csec.zentra'
         minSdkVersion 29
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

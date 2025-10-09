@@ -1,4 +1,4 @@
-package com.ahmadsyuaib.androidmobilebankingapp
+package com.csec.zentra
 
 import android.os.Build
 import android.os.Bundle

@@ -33,22 +33,22 @@ export default function InAppWebViewScreen() {
 
     const sharePage = async () => {
         try {
-        await Share.share({
-            message: `${title ?? "Link"}: ${currentUrl}`,
-            url: currentUrl, // iOS uses this
-            title: title ?? "Share link",
-        });
-        } catch {}
+            await Share.share({
+                message: `${title ?? "Link"}: ${currentUrl}`,
+                url: currentUrl, // iOS uses this
+                title: title ?? "Share link",
+            });
+        } catch { }
     };
 
     if (!currentUrl) {
         return (
-        <View style={styles.center}>
-            <Text>Missing URL</Text>
-            <TouchableOpacity style={styles.primaryBtn} onPress={() => router.back()}>
-                <Text style={styles.primaryBtnText}>Close</Text>
-            </TouchableOpacity>
-        </View>
+            <View style={styles.center}>
+                <Text>Missing URL</Text>
+                <TouchableOpacity style={styles.primaryBtn} onPress={() => router.back()}>
+                    <Text style={styles.primaryBtnText}>Close</Text>
+                </TouchableOpacity>
+            </View>
         );
     }
 
@@ -64,7 +64,7 @@ export default function InAppWebViewScreen() {
                 {/* Title */}
                 <View style={styles.headerCenter}>
                     <Text numberOfLines={1} style={styles.headerTitle}>
-                    {title || currentUrl}
+                        {title || currentUrl}
                     </Text>
                 </View>
 
@@ -83,29 +83,34 @@ export default function InAppWebViewScreen() {
             <WebView
                 ref={webref}
                 source={{ uri: currentUrl }}
+                javaScriptEnabled={true}  // Enable JavaScript
+                sharedCookiesEnabled={true}  // important
+                thirdPartyCookiesEnabled={true} // allow cross-site cookies
+                allowFileAccess={true} // ANDROID ONLY
+                allowFileAccessFromFileURLs={false} // ANDROID ONLY
                 onLoadStart={() => setLoading(true)}
                 onLoadEnd={() => setLoading(false)}
                 onNavigationStateChange={(nav) => {
-                setCanGoBack(nav.canGoBack);
-                if (nav.url) setCurrentUrl(nav.url);
+                    setCanGoBack(nav.canGoBack);
+                    if (nav.url) setCurrentUrl(nav.url);
                 }}
                 // Keep nav inside the WebView (don’t pop Safari)
                 setSupportMultipleWindows={false}
                 originWhitelist={["*"]}
                 onShouldStartLoadWithRequest={(req) => {
-                // If you want to open certain domains externally, do it here.
-                // Example to keep everything inside:
-                return true;
+                    // If you want to open certain domains externally, do it here.
+                    // Example to keep everything inside:
+                    return true;
                 }}
                 // Enable JS <-> RN bridge if needed:
                 // onMessage={(e) => console.log(e.nativeEvent.data)}
                 // injectedJavaScript={`window.ReactNativeWebView.postMessage("hello"); true;`}
                 // iOS bounce behavior:
                 bounces={false}
-                // Android file chooser etc. might need extra props depending on use-case.
+            // Android file chooser etc. might need extra props depending on use-case.
             />
 
-                {/* Footer toolbar */}
+            {/* Footer toolbar */}
             <View style={styles.footer}>
                 <TouchableOpacity onPress={goBack} style={styles.footerBtn}>
                     <Image
@@ -132,7 +137,7 @@ export default function InAppWebViewScreen() {
             {/* Loader overlay */}
             {loading && (
                 <View pointerEvents="none" style={styles.loader}>
-                <ActivityIndicator />
+                    <ActivityIndicator />
                 </View>
             )}
         </SafeAreaView>

@@ -1,11 +1,11 @@
 {
   "expo": {
-    "scheme": "mobile-banking-app",
-    "name": "mobile-banking-app",
+    "scheme": "zentrabank",
+    "name": "Zentra Bank",
     "slug": "testReactNative",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/ZentraBankLogo.png",
+    "icon": "./assets/ZentraAppIcon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
@@ -22,16 +22,19 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.ahmadsyuaib.androidmobilebankingapp"
+      "package": "com.csec.zentra"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-router",
-      ["react-native-vision-camera", {
-        "enableCodeScanner": true
-      }]
+      [
+        "react-native-vision-camera",
+        {
+          "enableCodeScanner": true
+        }
+      ]
     ],
     "extra": {
       "router": {},
@@ -39,6 +42,6 @@
         "projectId": "25d0a5cb-5101-4a2c-81b9-ed2a1c518487"
       }
     },
-    "owner": "ahmadsyuaib"
+    "owner": "csec"
   }
 }

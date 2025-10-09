@@ -14,13 +14,13 @@
     "preview": {
       "distribution": "internal",
       "env": {
-        "ENVFILE": ".env.production"
+        "ENVFILE": ".env"
       }
     },
     "production": {
       "autoIncrement": true,
       "env": {
-        "ENVFILE": ".env.production"
+        "ENVFILE": ".env"
       }
     }
   },

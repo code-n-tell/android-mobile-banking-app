@@ -1,5 +1,5 @@
 {
-  "name": "mobile-banking-app",
+  "name": "Zentra Bank",
   "version": "1.0.0",
   "main": "expo-router/entry",
   "scripts": {
@@ -15,22 +15,23 @@
     "@shopify/react-native-skia": "v2.0.0-next.4",
     "@supabase/supabase-js": "^2.49.5-next.1",
     "cross-fetch": "^4.1.0",
-    "expo": "~53.0.9",
+    "expo": "~53.0.23",
     "expo-constants": "~17.1.6",
-    "expo-dev-client": "~5.2.1",
-    "expo-router": "~5.0.7",
+    "expo-dev-client": "~5.2.4",
+    "expo-linear-gradient": "~14.1.5",
+    "expo-router": "~5.1.7",
     "expo-status-bar": "~2.2.3",
     "react": "19.0.0",
-    "react-native": "0.79.2",
+    "react-native": "0.79.5",
     "react-native-dotenv": "^3.4.11",
     "react-native-qrcode-svg": "^6.3.15",
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "5.4.0",
-    "react-native-screens": "~4.10.0",
+    "react-native-screens": "~4.11.1",
     "react-native-svg": "15.11.2",
     "react-native-url-polyfill": "^2.0.0",
     "react-native-vision-camera": "^4.7.2",
-    "react-native-webview": "^13.16.0"
+    "react-native-webview": "13.13.5"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
