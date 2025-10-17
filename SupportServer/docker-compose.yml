@@ -1,0 +1,26 @@
+services:
+  app:
+    build: .
+    image: chat-app:latest # tag the image
+    container_name: chat-app
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "python3 - <<'PY'\nimport urllib.request,sys\ntry:\n  urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)\n  sys.exit(0)\nexcept Exception:\n  sys.exit(1)\nPY"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  agent:
+    image: chat-app:latest     # reuse same image
+    container_name: chat-agent
+    depends_on:
+      app:
+        condition: service_healthy
+    # INTERACTIVE TTY:
+    stdin_open: true           # keeps STDIN open
+    tty: true                  # allocates a TTY
+    restart: "no"              # don't auto-restart when you exit the agent
+    working_dir: /app
+    command: ["python3","agent_cli.py","--url","ws://app:8000/ws"]

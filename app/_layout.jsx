@@ -17,7 +17,7 @@ export default function RootLayout() {
         const checkResult = await PermissionsAndroid.check(
           PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
         );
-        
+
         if (checkResult) {
           console.log('Notification permission already granted');
           return true;
@@ -161,6 +161,13 @@ export default function RootLayout() {
             options={{
                 headerShown: false,
                 gestureEnabled: false, // Disable swipe back gesture
+            }}
+        />
+
+        <Stack.Screen
+            name="LiveChatScreen"
+            options={{
+                headerShown: false,
             }}
         />
 

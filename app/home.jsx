@@ -1,4 +1,5 @@
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, StatusBar, ScrollView } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '../lib/supabase.js';
@@ -215,7 +216,7 @@ export default function Home() {
         }
     };
 
-    const handleCards = () => {
+    const handleChat = () => {
         // Changed this to LiveChat for now
         router.push({
                 pathname: '/LiveChatScreen',
@@ -227,17 +228,13 @@ export default function Home() {
 
     const handleUpdateParticulars = () => {
         // Navigate to user info page
-        router.push('/userinfo');
-    };
-
-    const handleChangeUserPin = () => {
-        // TODO: Add Change User ID/Pin functionality
-        console.log('Change User ID/Pin pressed');
-    };
-
-    const handleCloseProfile = () => {
-        // TODO: Add Close Bank Profile functionality
-        console.log('Close Bank Profile pressed');
+        // router.push('/userinfo');
+        router.push({
+                pathname: '/userinfo',
+                params: {
+                    customerId: customerId
+                }
+        });
     };
 
     function handleOpenWebview() {
@@ -248,23 +245,42 @@ export default function Home() {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
-            <StatusBar barStyle="dark-content" backgroundColor="#f8f9fa" />
+        <View style={styles.container}>
+            <StatusBar barStyle="light-content" backgroundColor="#0e273c" />
+            {/* Header with Zentra Bank branding */}
+            <LinearGradient
+                colors={['#0e273c', '#1a3a52']}
+                style={styles.headerGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+            >
+                <SafeAreaView>
+                    <View style={styles.headerContainer}>
+                        <View style={styles.headerTop}>
+                            <View style={styles.logoContainer}>
+                                <View style={styles.logo}>
+                                    <Text style={styles.logoText}>💳</Text>
+                                </View>
+                                <Text style={styles.bankName}>Zentra Bank</Text>
+                            </View>
+                            <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+                                <Text style={styles.logoutText}>Logout</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.header}>
+                            <Text style={styles.welcomeText}>Welcome Back</Text>
+                            <Text style={styles.userEmail}>{user.email}</Text>
+                        </View>
+                    </View>
+                </SafeAreaView>
+            </LinearGradient>
+
+            {/* White content area */}
             <ScrollView
                 style={styles.scrollView}
                 contentContainerStyle={styles.scrollContent}
-                showsVerticalScrollIndicator={true}
+                showsVerticalScrollIndicator={false}
             >
-                <View style={styles.headerLogOut}>
-                    <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-                        <Text style={styles.logoutText}>Logout</Text>
-                    </TouchableOpacity>
-                </View>
-
-                <View style={styles.header}>
-                    <Text style={styles.welcomeText}>Welcome Back</Text>
-                    <Text style={styles.userEmail}>{user.email}</Text>
-                </View>
 
                 {/* Account Balance Card */}
                 <View style={styles.balanceCard}>
@@ -305,68 +321,49 @@ export default function Home() {
                             <View style={styles.actionIconPlaceholder}>
                                 <Text style={styles.actionIconText}>💳</Text>
                             </View>
-                            <Text style={styles.actionText}>PayNow</Text>
+                            <Text style={styles.actionText} numberOfLines={2} adjustsFontSizeToFit>PayNow</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity style={styles.actionButton} onPress={handleScanPay}>
                             <View style={styles.actionIconPlaceholder}>
                                 <Text style={styles.actionIconText}>📱</Text>
                             </View>
-                            <Text style={styles.actionText}>Scan & Pay</Text>
+                            <Text style={styles.actionText} numberOfLines={2} adjustsFontSizeToFit>Scan & Pay</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity style={styles.actionButton} onPress={handleFundTransfer}>
                             <View style={styles.actionIconPlaceholder}>
                                 <Text style={styles.actionIconText}>💸</Text>
                             </View>
-                            <Text style={styles.actionText}>Fund Transfer</Text>
+                            <Text style={styles.actionText} numberOfLines={2} adjustsFontSizeToFit>Fund Transfer</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
 
-                {/* Apply Card */}
+                {/* Others Card */}
                 <View style={styles.actionsCard}>
-                    <Text style={styles.actionsTitle}>Apply</Text>
+                    <Text style={styles.actionsTitle}>Others</Text>
                     <View style={styles.applyContainer}>
                         <TouchableOpacity style={styles.applyButton} onPress={handleAccounts}>
                             <View style={styles.actionIconPlaceholder}>
                                 <Text style={styles.actionIconText}>🏦</Text>
                             </View>
-                            <Text style={styles.actionText}>Accounts</Text>
+                            <Text style={styles.actionText} numberOfLines={2} adjustsFontSizeToFit>Accounts</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.applyButton} onPress={handleCards}>
-                            <View style={styles.actionIconPlaceholder}>
-                                <Text style={styles.actionIconText}>💳</Text>
-                            </View>
-                            <Text style={styles.actionText}>Cards</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
 
-                {/* Profile Card */}
-                <View style={styles.actionsCard}>
-                    <Text style={styles.actionsTitle}>Profile</Text>
-                    <View style={styles.actionsContainer}>
                         <TouchableOpacity style={styles.actionButton} onPress={handleUpdateParticulars}>
                             <View style={styles.actionIconPlaceholder}>
                                 <Text style={styles.actionIconText}>✏️</Text>
                             </View>
-                            <Text style={styles.actionText}>Update Particulars</Text>
+                            <Text style={styles.actionText} numberOfLines={2} adjustsFontSizeToFit>View Profile</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.actionButton} onPress={handleChangeUserPin}>
+                        <TouchableOpacity style={styles.applyButton} onPress={handleChat}>
                             <View style={styles.actionIconPlaceholder}>
-                                <Text style={styles.actionIconText}>🔐</Text>
+                                <Text style={styles.actionIconText}>💬</Text>
                             </View>
-                            <Text style={styles.actionText}>Change User ID/Pin</Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity style={styles.actionButton} onPress={handleCloseProfile}>
-                            <View style={styles.actionIconPlaceholder}>
-                                <Text style={styles.actionIconText}>❌</Text>
-                            </View>
-                            <Text style={styles.actionText}>Close Bank Profile</Text>
+                            <Text style={styles.actionText}>Support</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -385,133 +382,196 @@ export default function Home() {
                 </View>
 
             </ScrollView>
-        </SafeAreaView>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f8f9fa',
+        backgroundColor: '#f8fafc',
+    },
+    headerGradient: {
+        paddingBottom: 20,
     },
     scrollView: {
         flex: 1,
+        backgroundColor: '#f8fafc',
     },
     scrollContent: {
-        paddingBottom: 24, // Add bottom padding for better scrolling
+        paddingBottom: 30,
+        paddingTop: 10,
     },
-    headerLogOut: {
-        flexDirection: 'row',
-        justifyContent: 'flex-end',
+    headerContainer: {
         paddingHorizontal: 24,
-        paddingTop: 24,
+        paddingTop: 40,
+        paddingBottom: 20,
+    },
+    headerTop: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    logoContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    logo: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: 'rgba(220, 178, 78, 0.2)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 12,
+        borderWidth: 1,
+        borderColor: '#dcb24e',
+    },
+    logoText: {
+        fontSize: 20,
+    },
+    bankName: {
+        fontSize: 20,
+        fontWeight: '700',
+        color: '#fffffe',
+        letterSpacing: 1,
     },
     header: {
-        flexDirection: 'column',
         alignItems: 'flex-start',
-        paddingHorizontal: 24,
-        paddingTop: 24,
     },
     welcomeText: {
-        fontSize: 24,
-        fontWeight: '600',
-        color: '#1f2937',
+        fontSize: 28,
+        fontWeight: '700',
+        color: '#fffffe',
+        letterSpacing: 0.5,
     },
     userEmail: {
-        fontSize: 14,
-        color: '#6b7280',
+        fontSize: 16,
+        color: '#dcb24e',
         marginTop: 4,
+        fontWeight: '400',
     },
     loadingContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: '#0e273c',
     },
     loadingText: {
-        fontSize: 16,
-        color: '#6b7280',
+        fontSize: 18,
+        color: '#fffffe',
+        fontWeight: '500',
     },
     logoutButton: {
-        padding: 8,
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        backgroundColor: 'rgba(220, 178, 78, 0.15)',
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: '#dcb24e',
     },
     logoutText: {
-        fontSize: 16,
-        color: '#ef4444',
-        fontWeight: '500',
+        fontSize: 14,
+        color: '#dcb24e',
+        fontWeight: '600',
     },
     balanceCard: {
         backgroundColor: '#ffffff',
-        marginHorizontal: 24,
+        marginHorizontal: 20,
         marginTop: 20,
         padding: 24,
-        borderRadius: 16,
-        shadowColor: '#000',
+        borderRadius: 12,
+        shadowColor: '#64748b',
         shadowOffset: {
             width: 0,
             height: 2,
         },
-        shadowOpacity: 0.1,
+        shadowOpacity: 0.08,
         shadowRadius: 8,
         elevation: 4,
+        borderWidth: 1,
+        borderColor: '#e2e8f0',
     },
     balanceLabel: {
         fontSize: 14,
-        color: '#6b7280',
+        color: '#64748b',
         marginBottom: 8,
+        fontWeight: '600',
+        textTransform: 'uppercase',
+        letterSpacing: 0.5,
     },
     balanceAmount: {
         fontSize: 32,
-        fontWeight: 'bold',
-        color: '#1f2937',
-        marginBottom: 8,
+        fontWeight: '700',
+        color: '#1e293b',
+        marginBottom: 6,
+        letterSpacing: -0.5,
     },
     accountNumber: {
         fontSize: 14,
-        color: '#9ca3af',
+        color: '#64748b',
+        fontWeight: '500',
     },
     noAccountMessage: {
         fontSize: 18,
-        fontWeight: '600',
-        color: '#374151',
-        marginBottom: 4,
+        fontWeight: '700',
+        color: '#1e293b',
+        marginBottom: 6,
+        textAlign: 'center',
     },
     noAccountSubtext: {
         fontSize: 14,
-        color: '#6b7280',
-        marginBottom: 16,
+        color: '#64748b',
+        marginBottom: 20,
+        textAlign: 'center',
+        lineHeight: 20,
     },
     createAccountButton: {
-        backgroundColor: '#3b82f6',
+        backgroundColor: '#1e40af',
         paddingVertical: 12,
         paddingHorizontal: 24,
         borderRadius: 8,
         alignItems: 'center',
-    },
-    createAccountButtonText: {
-        color: '#ffffff',
-        fontSize: 14,
-        fontWeight: '600',
-    },
-    actionsCard: {
-        backgroundColor: '#ffffff',
-        marginHorizontal: 24,
-        marginTop: 20,
-        padding: 24,
-        borderRadius: 16,
-        shadowColor: '#000',
+        shadowColor: '#1e40af',
         shadowOffset: {
             width: 0,
             height: 2,
         },
         shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    createAccountButtonText: {
+        color: '#ffffff',
+        fontSize: 15,
+        fontWeight: '600',
+        letterSpacing: 0.3,
+    },
+    actionsCard: {
+        backgroundColor: '#ffffff',
+        marginHorizontal: 20,
+        marginTop: 16,
+        padding: 20,
+        borderRadius: 12,
+        shadowColor: '#64748b',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.08,
         shadowRadius: 8,
         elevation: 4,
+        borderWidth: 1,
+        borderColor: '#e2e8f0',
     },
     actionsTitle: {
-        fontSize: 18,
-        fontWeight: '600',
-        color: '#1f2937',
-        marginBottom: 20,
+        fontSize: 16,
+        fontWeight: '700',
+        color: '#1e293b',
+        marginBottom: 16,
+        letterSpacing: 0.3,
+        textTransform: 'uppercase',
     },
     actionsContainer: {
         flexDirection: 'row',
@@ -524,32 +584,45 @@ const styles = StyleSheet.create({
     actionButton: {
         alignItems: 'center',
         flex: 1,
-        paddingVertical: 16,
+        paddingVertical: 20,
         paddingHorizontal: 8,
+        backgroundColor: 'transparent',
+        marginHorizontal: 6,
+        minHeight: 110,
     },
     applyButton: {
         alignItems: 'center',
         flex: 1,
-        paddingVertical: 16,
-        paddingHorizontal: 16,
+        paddingVertical: 20,
+        paddingHorizontal: 12,
         maxWidth: '45%',
+        backgroundColor: 'transparent',
+        marginHorizontal: 6,
+        minHeight: 110,
     },
-    actionIconPlaceholder: { // Makes it consistent across buttons
-        width: 48,
-        height: 48,
-        borderRadius: 24,
-        backgroundColor: '#f3f4f6',
+    actionIconPlaceholder: {
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+        backgroundColor: '#f8fafc',
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 8,
+        marginBottom: 12,
+        borderWidth: 1,
+        borderColor: '#e2e8f0',
     },
     actionIconText: {
-        fontSize: 20,
+        fontSize: 22,
     },
     actionText: {
-        fontSize: 14,
-        fontWeight: '500',
-        color: '#374151',
+        fontSize: 13,
+        fontWeight: '600',
+        color: '#475569',
         textAlign: 'center',
+        letterSpacing: 0.2,
+        lineHeight: 16,
+        maxWidth: '100%',
+        flexWrap: 'wrap',
+        marginTop: 2,
     },
 });

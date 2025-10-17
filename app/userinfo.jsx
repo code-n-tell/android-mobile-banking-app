@@ -1,19 +1,19 @@
-import { View, Text, StyleSheet, SafeAreaView, StatusBar, ScrollView, ActivityIndicator } from 'react-native';
-import { useRouter } from 'expo-router';
+import { View, Text, StyleSheet, SafeAreaView, StatusBar, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { getUserProfile } from '../lib/services/userService';
 
 export default function UserInfo() {
     const router = useRouter();
+    const { customerId } = useLocalSearchParams();
     const [user, setUser] = useState(null);
-    const [customerData, setCustomerData] = useState(null);
-    const [customerId, setCustomerId] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const fetchUserAndCustomerData = async () => {
+        const fetchUserData = async () => {
         try {
             // Get current session
             const { data: { session }, error: sessionError } = await supabase.auth.getSession();
@@ -24,127 +24,128 @@ export default function UserInfo() {
             }
 
             setUser(session.user);
-
-            // Use your userService with user.id directly
-            const customerData = await getUserProfile(session.user.id);
-
-            if (customerData) {
-                setCustomerData(customerData);
-                setCustomerId(customerData.customer_id); // Extract customer_id from the data
-            } else {
-                setError('Could not find customer profile');
-            }
-
             setLoading(false);
         } catch (err) {
-            console.error('Error in fetchUserAndCustomerData:', err);
+            console.error('Error in fetchUserData:', err);
             setError('An error occurred while loading user data');
             setLoading(false);
         }
         };
 
-        fetchUserAndCustomerData();
+        fetchUserData();
     }, []);
+
+    const handleContactSupport = () => {
+        router.push({
+                pathname: '/LiveChatScreen',
+                params: {
+                    customerId: customerId
+                }
+        });
+    };
 
     if (loading) {
         return (
-        <SafeAreaView style={styles.container}>
-            <StatusBar barStyle="dark-content" backgroundColor="#f8f9fa" />
-            <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#2563eb" />
-            <Text style={styles.loadingText}>Loading user information...</Text>
-            </View>
-        </SafeAreaView>
+        <LinearGradient colors={['#0e273c', '#1a3a5c']} style={styles.container}>
+            <SafeAreaView style={styles.container}>
+                <StatusBar barStyle="light-content" backgroundColor="#0e273c" />
+                <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#dcb24e" />
+                <Text style={styles.loadingText}>Loading user information...</Text>
+                </View>
+            </SafeAreaView>
+        </LinearGradient>
         );
     }
 
     if (error) {
         return (
-        <SafeAreaView style={styles.container}>
-            <StatusBar barStyle="dark-content" backgroundColor="#f8f9fa" />
-            <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>{error}</Text>
-            </View>
-        </SafeAreaView>
+        <LinearGradient colors={['#0e273c', '#1a3a5c']} style={styles.container}>
+            <SafeAreaView style={styles.container}>
+                <StatusBar barStyle="light-content" backgroundColor="#0e273c" />
+                <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>{error}</Text>
+                </View>
+            </SafeAreaView>
+        </LinearGradient>
         );
     }
 
     return (
-        <SafeAreaView style={styles.container}>
-        <StatusBar barStyle="dark-content" backgroundColor="#f8f9fa" />
-        <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+        <LinearGradient colors={['#0e273c', '#1a3a5c']} style={styles.container}>
+            <SafeAreaView style={styles.container}>
+            <StatusBar barStyle="light-content" backgroundColor="#0e273c" />
+            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
 
-            {/* Header */}
-            <View style={styles.header}>
-            <Text style={styles.headerTitle}>User Information</Text>
-            </View>
+                {/* Header */}
+                <View style={styles.header}>
+                    <View style={styles.logoContainer}>
+                        <View style={styles.logo}>
+                            <Text style={styles.logoText}>👤</Text>
+                        </View>
+                        <Text style={styles.headerTitle}>Profile</Text>
+                    </View>
+                </View>
 
-            {/* Auth User Info Card */}
-            <View style={styles.card}>
-            <Text style={styles.cardTitle}>Authentication Details</Text>
-            {user && (
-                <>
-                <View style={styles.infoRow}>
-                    <Text style={styles.label}>Auth User ID:</Text>
-                    <Text style={styles.value}>{user.id}</Text>
+                {/* User Profile Card */}
+                <View style={styles.card}>
+                    <Text style={styles.cardTitle}>Account Information</Text>
+                    {user && (
+                        <>
+                        <View style={styles.infoRow}>
+                            <Text style={styles.label}>Email:</Text>
+                            <Text style={styles.value}>{user.email}</Text>
+                        </View>
+                        <View style={styles.infoRow}>
+                            <Text style={styles.label}>Account Status:</Text>
+                            <Text style={styles.valueVerified}>
+                                {user.email_confirmed_at ? '✓ Verified' : 'Pending Verification'}
+                            </Text>
+                        </View>
+                        </>
+                    )}
                 </View>
-                <View style={styles.infoRow}>
-                    <Text style={styles.label}>Email:</Text>
-                    <Text style={styles.value}>{user.email}</Text>
-                </View>
-                <View style={styles.infoRow}>
-                    <Text style={styles.label}>Email Verified:</Text>
-                    <Text style={styles.value}>{user.email_confirmed_at ? 'Yes' : 'No'}</Text>
-                </View>
-                </>
-            )}
-            </View>
 
-            {/* Customer ID Card */}
-            <View style={styles.card}>
-            <Text style={styles.cardTitle}>Customer Profile</Text>
-            <View style={styles.infoRow}>
-                <Text style={styles.label}>Customer ID:</Text>
-                <Text style={styles.valueHighlight}>{customerId || 'Not found'}</Text>
-            </View>
-            </View>
+                {/* Support Card */}
+                <View style={styles.supportCard}>
+                    <View style={styles.supportHeader}>
+                        <Text style={styles.supportIcon}>💬</Text>
+                        <Text style={styles.supportTitle}>Need Help?</Text>
+                    </View>
+                    <Text style={styles.supportDescription}>
+                        Our customer support team is available 24/7 to assist you with any questions or concerns.
+                    </Text>
+                    <TouchableOpacity style={styles.supportButton} onPress={handleContactSupport}>
+                        <Text style={styles.supportButtonText}>Contact Live Support</Text>
+                    </TouchableOpacity>
+                </View>
 
-            {/* Customer Data Card */}
-            {customerData && (
-            <View style={styles.card}>
-                <Text style={styles.cardTitle}>Customer Details</Text>
-                <View style={styles.infoRow}>
-                <Text style={styles.label}>Legal Name:</Text>
-                <Text style={styles.value}>{customerData.legal_name || 'N/A'}</Text>
+                {/* Quick Tips Card */}
+                <View style={styles.tipsCard}>
+                    <Text style={styles.tipsTitle}>Quick Tips</Text>
+                    <View style={styles.tipItem}>
+                        <Text style={styles.tipIcon}>🔒</Text>
+                        <Text style={styles.tipText}>Keep your login credentials secure and never share them with anyone</Text>
+                    </View>
+                    <View style={styles.tipItem}>
+                        <Text style={styles.tipIcon}>🚨</Text>
+                        <Text style={styles.tipText}>Monitor your account regularly for any unauthorized transactions</Text>
+                    </View>
+                    <View style={styles.tipItem}>
+                        <Text style={styles.tipIcon}>⚠️</Text>
+                        <Text style={styles.tipText}>Our staff will never ask you to click any links or ask for your passwords</Text>
+                    </View>
                 </View>
-                <View style={styles.infoRow}>
-                <Text style={styles.label}>Birth Date:</Text>
-                <Text style={styles.value}>{customerData.birth_date || 'N/A'}</Text>
-                </View>
-                <View style={styles.infoRow}>
-                <Text style={styles.label}>National ID:</Text>
-                <Text style={styles.value}>{customerData.national_id_number || 'N/A'}</Text>
-                </View>
-                <View style={styles.infoRow}>
-                <Text style={styles.label}>Country:</Text>
-                <Text style={styles.value}>{customerData.residency_country || 'N/A'}</Text>
-                </View>
-                <View style={styles.infoRow}>
-                <Text style={styles.label}>Customer Type:</Text>
-                <Text style={styles.value}>{customerData.customer_type || 'N/A'}</Text>
-                </View>
-            </View>
-            )}
 
-        </ScrollView>
-        </SafeAreaView>
+            </ScrollView>
+            </SafeAreaView>
+        </LinearGradient>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f8f9fa',
     },
     scrollView: {
         flex: 1,
@@ -155,12 +156,31 @@ const styles = StyleSheet.create({
     header: {
         paddingHorizontal: 24,
         paddingTop: 24,
-        paddingBottom: 16,
+        paddingBottom: 20,
+    },
+    logoContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    logo: {
+        width: 48,
+        height: 48,
+        borderRadius: 24,
+        backgroundColor: 'rgba(220, 178, 78, 0.15)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 16,
+        borderWidth: 2,
+        borderColor: '#dcb24e',
+    },
+    logoText: {
+        fontSize: 24,
     },
     headerTitle: {
         fontSize: 28,
-        fontWeight: 'bold',
-        color: '#1f2937',
+        fontWeight: '700',
+        color: '#fffffe',
+        letterSpacing: 0.5,
     },
     loadingContainer: {
         flex: 1,
@@ -168,9 +188,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     loadingText: {
-        fontSize: 16,
-        color: '#6b7280',
+        fontSize: 18,
+        color: '#fffffe',
         marginTop: 12,
+        fontWeight: '500',
     },
     errorContainer: {
         flex: 1,
@@ -180,56 +201,162 @@ const styles = StyleSheet.create({
     },
     errorText: {
         fontSize: 16,
-        color: '#ef4444',
+        color: '#dcb24e',
         textAlign: 'center',
+        fontWeight: '500',
     },
     card: {
-        backgroundColor: '#ffffff',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
         marginHorizontal: 24,
-        marginTop: 16,
-        padding: 20,
-        borderRadius: 12,
-        shadowColor: '#000',
+        marginTop: 20,
+        padding: 24,
+        borderRadius: 20,
+        shadowColor: '#0e273c',
         shadowOffset: {
         width: 0,
-        height: 2,
+        height: 8,
         },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-        elevation: 4,
+        shadowOpacity: 0.15,
+        shadowRadius: 12,
+        elevation: 10,
+        borderWidth: 1,
+        borderColor: 'rgba(220, 178, 78, 0.2)',
     },
     cardTitle: {
-        fontSize: 18,
-        fontWeight: '600',
-        color: '#1f2937',
-        marginBottom: 16,
+        fontSize: 20,
+        fontWeight: '700',
+        color: '#0e273c',
+        marginBottom: 20,
+        letterSpacing: 0.5,
     },
     infoRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingVertical: 8,
+        paddingVertical: 12,
         borderBottomWidth: 1,
-        borderBottomColor: '#f3f4f6',
+        borderBottomColor: 'rgba(220, 178, 78, 0.1)',
     },
     label: {
-        fontSize: 14,
+        fontSize: 15,
         color: '#6b7280',
-        fontWeight: '500',
+        fontWeight: '600',
         flex: 1,
     },
     value: {
-        fontSize: 14,
-        color: '#1f2937',
+        fontSize: 15,
+        color: '#0e273c',
+        flex: 2,
+        textAlign: 'right',
+        fontWeight: '500',
+    },
+    valueVerified: {
+        fontSize: 15,
+        color: '#dcb24e',
+        fontWeight: '700',
         flex: 2,
         textAlign: 'right',
     },
-    valueHighlight: {
-        fontSize: 14,
-        color: '#2563eb',
-        fontWeight: '600',
-        flex: 2,
-        textAlign: 'right',
+    supportCard: {
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        marginHorizontal: 24,
+        marginTop: 20,
+        padding: 24,
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: 'rgba(220, 178, 78, 0.2)',
+        shadowColor: '#0e273c',
+        shadowOffset: {
+            width: 0,
+            height: 8,
+        },
+        shadowOpacity: 0.15,
+        shadowRadius: 12,
+        elevation: 10,
+    },
+    supportHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 16,
+    },
+    supportIcon: {
+        fontSize: 28,
+        marginRight: 12,
+    },
+    supportTitle: {
+        fontSize: 22,
+        fontWeight: '700',
+        color: '#0e273c',
+        letterSpacing: 0.5,
+    },
+    supportDescription: {
+        fontSize: 16,
+        color: '#0e273c',
+        lineHeight: 24,
+        marginBottom: 20,
+        fontWeight: '400',
+    },
+    supportButton: {
+        backgroundColor: '#dcb24e',
+        paddingVertical: 16,
+        paddingHorizontal: 24,
+        borderRadius: 16,
+        alignItems: 'center',
+        shadowColor: '#dcb24e',
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 6,
+    },
+    supportButtonText: {
+        fontSize: 16,
+        fontWeight: '700',
+        color: '#0e273c',
+        letterSpacing: 0.5,
+    },
+    tipsCard: {
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        marginHorizontal: 24,
+        marginTop: 20,
+        padding: 24,
+        borderRadius: 20,
+        shadowColor: '#0e273c',
+        shadowOffset: {
+            width: 0,
+            height: 8,
+        },
+        shadowOpacity: 0.15,
+        shadowRadius: 12,
+        elevation: 10,
+        borderWidth: 1,
+        borderColor: 'rgba(220, 178, 78, 0.2)',
+    },
+    tipsTitle: {
+        fontSize: 20,
+        fontWeight: '700',
+        color: '#0e273c',
+        marginBottom: 20,
+        letterSpacing: 0.5,
+    },
+    tipItem: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        marginBottom: 16,
+    },
+    tipIcon: {
+        fontSize: 20,
+        marginRight: 12,
+        marginTop: 2,
+    },
+    tipText: {
+        fontSize: 15,
+        color: '#0e273c',
+        lineHeight: 22,
+        flex: 1,
+        fontWeight: '400',
     },
     //   debugCard: {
     //     backgroundColor: '#f3f4f6',
